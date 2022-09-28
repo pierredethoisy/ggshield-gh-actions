@@ -1,0 +1,1 @@
+# ggshield-gh-actions
