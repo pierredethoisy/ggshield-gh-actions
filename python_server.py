@@ -3,7 +3,7 @@ import MySQLdb, pprint
 
 uneConnexionBDD = MySQLdb.connect(host   ='192.32.12.10',
                                    user   ='admin',
-                                
+                                   apikey='xoxb-163213206324-SDFSfsdgfdsgFE333CD4',
                                    db     ='uneBase')
 leCurseur       = uneConnexionBDD.cursor()
 unAuteur        = "'Zola'"
