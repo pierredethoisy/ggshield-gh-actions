@@ -3,3 +3,5 @@ aws_secret_access_key = cZIxOB71IFGoRLqb/UjBxdceU3rfvw6JKVrT8qDc
 
 
 password = cZIxOB71IFGoRLDSFGEFfsdgdfgfgSDFSFD
+
+password = cZIxOB71IFGoRLDSFGEFfsdgdfgfgSD24252
