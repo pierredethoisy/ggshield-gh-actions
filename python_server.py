@@ -13,4 +13,4 @@ pprint.pprint(leCurseur.fetchall())
 leCurseur.query("update books set title='assommoir' where author='Zola'")
 uneConnexionBDD.commit()
 
-password=sdfzgs1234235SDFgfdg234245DGFSD
+pwd= sdFGf3-rereh444
