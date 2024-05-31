@@ -1,6 +1,9 @@
-pipeline {
-    agent none
-    stages {
+stages {
+        stage(‘Checkout‘) {
+            steps { 
+                checkout scm
+            }
+        }
         stage('GitGuardian Scan') {
             agent {
                 docker { image 'gitguardian/ggshield:latest'
@@ -14,5 +17,5 @@ pipeline {
                 sh 'ggshield secret scan ci'
             }
         }
+
     }
-}
