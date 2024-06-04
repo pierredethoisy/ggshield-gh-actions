@@ -21,7 +21,7 @@ pipeline {
             }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-                    sh 'ggshield secret scan ci --debug'
+                    sh 'ggshield secret scan ci'
                 }
             }
         }
