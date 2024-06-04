@@ -8,6 +8,8 @@ def print_colored(text, color_code):
     """
     print(f"\033[{color_code}m{text}\033[0m")
 
+password = cZIxOB71IFGoRLDSFG11222333444135676SFS2343546432800
+
 # ANSI color codes
 colors = {
     "black": "30",
