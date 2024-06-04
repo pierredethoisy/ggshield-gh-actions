@@ -21,7 +21,8 @@ pipeline {
             }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-                    sh 'jq . ggshield secret scan ci --json'
+                    sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
+                    sh 'ggshield secret scan ci --json'
                 }
             }
         }
