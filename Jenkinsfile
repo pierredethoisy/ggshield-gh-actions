@@ -7,6 +7,7 @@ pipeline {
     }
     environment {
         PDT_SECRETS_CHECK_STRICT = "false"
+        PDT_SECRETS_CHECK = "true"        
         PDT_SECRETS_RUNNER_TAG = "tiny"
         GIT_GUARDIAN_REPORT = "gg-secret-detection-report.json"
         GIT_GUARDIAN_PATH_REPORT = "gg-secret-detection-report-path.json"
