@@ -34,3 +34,12 @@ print_colored("This is cyan text", colors["cyan"])
 print_colored("This is white text", colors["white"])
 
 Secret: api_key=A4342DFSDFGFD234245GDDFHDSR2342543TDFGDFH34
+
+
+
+password = cZIxOB71IFGoRLDSFG11222333444135676SFSGFD3543EEZ1231SQDSD
+
+
+password = cZIxOB71IFGoRLDSFG11222333444135676SF23416969
+
+
