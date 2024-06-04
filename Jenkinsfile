@@ -3,23 +3,27 @@ pipeline {
     stages {
         stage('Checkout') {
             agent any
-            steps { 
-                checkout scm
+            steps {
+                wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+                    checkout scm
+                }
             }
         }
         stage('GitGuardian Scan') {
             agent {
-                docker { image 'gitguardian/ggshield:latest'
-                args '-e HOME=${WORKSPACE}'       
-                       }
+                docker {
+                    image 'gitguardian/ggshield:latest'
+                    args '-e HOME=${WORKSPACE}'
+                }
             }
             environment {
                 GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
             }
             steps {
-                sh 'ggshield secret scan ci'
+                wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+                    sh 'ggshield secret scan ci'
+                }
             }
         }
-
     }
 }
