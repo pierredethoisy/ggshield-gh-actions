@@ -31,5 +31,4 @@ print_colored("This is magenta text", colors["magenta"])
 print_colored("This is cyan text", colors["cyan"])
 print_colored("This is white text", colors["white"])
 
-Secret: api_key=12345-ABCDE-67890-FGHIJ
-
+Secret: api_key=A4342DFSDFGFD234245GDDFHDSR2342543TDFGDFH34
