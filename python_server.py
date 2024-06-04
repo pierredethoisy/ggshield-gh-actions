@@ -14,3 +14,10 @@ leCurseur.query("update books set title='assommoir' where author='Zola'")
 uneConnexionBDD.commit()
 
 pwd= sdFGf3-rereh444 #ggignore
+
+pwd= sdFsSSf3-rereh4245555
+
+
+SLACK_KEY = "xoxb-2735672888864-FGaabFG8v777g478488669cc685467
+
+SLACK_KEY = "xoxb-2735672888864-FGaabFG8v777g478488669cc681212312
