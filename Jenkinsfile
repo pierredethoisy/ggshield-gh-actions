@@ -18,7 +18,7 @@ pipeline {
             }
             environment {
                 GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
-                {
+            }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
