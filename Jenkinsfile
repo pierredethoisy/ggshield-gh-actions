@@ -16,9 +16,6 @@ pipeline {
                     args '-e HOME=${WORKSPACE}'
                 }
             }
-            environment {
-                GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
-            }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
@@ -28,6 +25,8 @@ pipeline {
         }
         stage('Process Results') {
             agent any
+            environment {
+                GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
             steps {
                 script {
                     def output = sh(script: "cat ggshield_output.json", returnStdout: true).trim()
@@ -39,7 +38,7 @@ pipeline {
                             def incidentUrl = incident["incident_url"]
                             def incidentId = incidentUrl.tokenize("/")[-1]
                             def response = sh(script: """
-                                curl -s -H "Authorization: Token ${GITGUARDIAN_API_KEY}" \
+                                curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
                                 https://api.gitguardian.com/v1/incidents/secrets/$incidentId
                             """, returnStdout: true).trim()
                             def incidentDetails = readJSON text: response
