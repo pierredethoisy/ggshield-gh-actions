@@ -16,6 +16,9 @@ pipeline {
                     args '-e HOME=${WORKSPACE}'
                 }
             }
+            environment {
+                GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
+                {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
@@ -25,9 +28,11 @@ pipeline {
         }
         stage('Process Results') {
             agent any
+            environment {
+                GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
+                {
             steps {
                 script {
-                    def GITGUARDIAN_API_KEY = credentials('gitguardian-api-key')
                     def output = sh(script: "cat ggshield_output.json", returnStdout: true).trim()
                     def json = readJSON text: output
                     def incidents = json["total_incidents"]
