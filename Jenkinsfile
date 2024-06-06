@@ -22,7 +22,7 @@ pipeline {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
-                    sh 'ggshield secret scan ci --json > ggshield_output.json'
+                    sh 'ggshield secret scan ci --json --output ggshield_output.json'
                 }
             }
         }
@@ -40,7 +40,7 @@ pipeline {
                             def incidentId = incidentUrl.tokenize("/")[-1]
                             def response = sh(script: """
                                 curl -s -H "Authorization: Token ${GITGUARDIAN_API_KEY}" \
-                                https://api.gitguardian.com/incidents/secrets/$incidentId
+                                https://api.gitguardian.com/v1/incidents/secrets/$incidentId
                             """, returnStdout: true).trim()
                             def incidentDetails = readJSON text: response
                             echo "Incident ID: ${incidentId}"
