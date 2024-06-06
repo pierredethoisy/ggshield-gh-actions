@@ -29,7 +29,7 @@ pipeline {
                 always {
                     script {
                         try {
-                            def output = sh 'ggshield secret scan repo . --json'
+                            def output = ggshield secret scan repo . --json
                             def json = readJSON text: output
                             def incidents = json["total_incidents"]
                             if (incidents > 0) {
