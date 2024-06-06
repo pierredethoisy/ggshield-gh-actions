@@ -22,34 +22,32 @@ pipeline {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
-                    sh 'ggshield secret scan repo . --json'
-                    sh 'ggshield secret scan repo . --json --output ggshield_output.json'
+                    sh 'ggshield secret scan repo --json --output ggshield_output.json'
                 }
             }
-        }
-        stage('Process Results') {
-            agent any
-            steps {
-                script {
-                    def output = sh(script: "cat ggshield_output.json", returnStdout: true).trim()
-                    def json = readJSON text: output
-                    def incidents = json["total_incidents"]
-                    if (incidents > 0) {
-                        def incidentsList = json["incidents"]
-                        for (incident in incidentsList) {
-                            def incidentUrl = incident["incident_url"]
-                            def incidentId = incidentUrl.tokenize("/")[-1]
-                            def response = sh(script: """
-                                curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
-                                https://api.gitguardian.com/v1/incidents/secrets/$incidentId
-                            """, returnStdout: true).trim()
-                            def incidentDetails = readJSON text: response
-                            echo "Incident ID: ${incidentId}"
-                            echo "Date: ${incidentDetails.date}"
-                            echo "Severity: ${incidentDetails.severity}"
+            post {
+                always {
+                    script {
+                        def output = sh(script: "cat ggshield_output.json", returnStdout: true).trim()
+                        def json = readJSON text: output
+                        def incidents = json["total_incidents"]
+                        if (incidents > 0) {
+                            def incidentsList = json["incidents"]
+                            for (incident in incidentsList) {
+                                def incidentUrl = incident["incident_url"]
+                                def incidentId = incidentUrl.tokenize("/")[-1]
+                                def response = sh(script: """
+                                    curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
+                                    https://api.gitguardian.com/v1/incidents/secrets/$incidentId
+                                """, returnStdout: true).trim()
+                                def incidentDetails = readJSON text: response
+                                echo "Incident ID: ${incidentId}"
+                                echo "Date: ${incidentDetails.date}"
+                                echo "Severity: ${incidentDetails.severity}"
+                            }
+                        } else {
+                            echo "No incidents found."
                         }
-                    } else {
-                        echo "No incidents found."
                     }
                 }
             }
