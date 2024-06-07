@@ -29,22 +29,30 @@ pipeline {
                 always {
                     script {
                         try {
+                            // Read the JSON file and parse total incidents
                             def output = sh(script: "cat ggshield_output.json", returnStdout: true).trim()
-                            def json = readJSON text: output
-                            def incidents = json["total_incidents"]
-                            if (incidents > 0) {
-                                def incidentsList = json["incidents"]
+                            def totalIncidents = sh(script: "jq '.total_incidents' ggshield_output.json", returnStdout: true).trim().toInteger()
+                            
+                            if (totalIncidents > 0) {
+                                // Parse incidents array and process each incident
+                                def incidentsList = sh(script: "jq -c '.incidents[]' ggshield_output.json", returnStdout: true).trim().split('\n')
                                 for (incident in incidentsList) {
-                                    def incidentUrl = incident["incident_url"]
+                                    def incidentJson = sh(script: "echo '${incident}' | jq .", returnStdout: true).trim()
+                                    def incidentUrl = sh(script: "echo '${incidentJson}' | jq -r '.incident_url'", returnStdout: true).trim()
                                     def incidentId = incidentUrl.tokenize("/")[-1]
+                                    
                                     def response = sh(script: """
                                         curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
                                         https://api.gitguardian.com/v1/incidents/secrets/$incidentId
                                     """, returnStdout: true).trim()
-                                    def incidentDetails = readJSON text: response
+                                    
+                                    def incidentDetails = sh(script: "echo '${response}' | jq .", returnStdout: true).trim()
+                                    def incidentDate = sh(script: "echo '${incidentDetails}' | jq -r '.date'", returnStdout: true).trim()
+                                    def incidentSeverity = sh(script: "echo '${incidentDetails}' | jq -r '.severity'", returnStdout: true).trim()
+                                    
                                     echo "Incident ID: ${incidentId}"
-                                    echo "Date: ${incidentDetails.date}"
-                                    echo "Severity: ${incidentDetails.severity}"
+                                    echo "Date: ${incidentDate}"
+                                    echo "Severity: ${incidentSeverity}"
                                 }
                             } else {
                                 echo "No incidents found."
