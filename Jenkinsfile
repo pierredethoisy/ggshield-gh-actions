@@ -45,10 +45,12 @@ pipeline {
                             
                             if (totalIncidents > 0) {
                                 def incidentsList = json.incidents
+                                echo "incidentsList: ${incidentsList}"
                                 for (incident in incidentsList) {
                                     def incidentUrl = incident.incident_url
+                                    echo "incidentUrl: ${incidentUrl}"
                                     def incidentId = incidentUrl.tokenize("/")[-1]
-                                    
+                                    echo "incidentId: ${incidentId}"                                    
                                     def response = sh(script: """
                                         curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
                                         https://api.gitguardian.com/v1/incidents/secrets/$incidentId
