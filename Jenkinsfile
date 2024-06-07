@@ -27,11 +27,10 @@ pipeline {
             post {
                 always {
                     script {
-                        try {
                             def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
                             if (output > 0) {
                                 // Parse incidents array and process each incident
-                                def incidentsList = sh(script: "jq -c '.incidents[]' ggshield_output.json", returnStdout: true).trim().split('\n')
+                                def incidentsList = sh(script: "jq -c '.output[]' ggshield_output.json", returnStdout: true).trim().split('\n')
                                 for (incident in incidentsList) {
                                     def incidentJson = sh(script: "echo '${incident}' | jq .", returnStdout: true).trim()
                                     def incidentUrl = sh(script: "echo '${incidentJson}' | jq -r '.incident_url'", returnStdout: true).trim()
@@ -53,8 +52,6 @@ pipeline {
                             } else {
                                 echo "No incidents found."
                             }
-                        } catch (Exception e) {
-                            echo "Failed to process results: ${e.message}"
                         }
                     }
                 }
