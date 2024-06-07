@@ -21,8 +21,19 @@ pipeline {
             }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-                    // Install jq
-                    sh 'apk add --no-cache jq'
+                    // Install jq using apt-get
+                    sh '''
+                        if command -v apt-get >/dev/null 2>&1; then
+                            apt-get update && apt-get install -y jq
+                        elif command -v apk >/dev/null 2>&1; then
+                            apk add --no-cache jq
+                        elif command -v yum >/dev/null 2>&1; then
+                            yum install -y jq
+                        else
+                            echo "No known package manager found. jq installation failed."
+                            exit 1
+                        fi
+                    '''
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
                     script {
                         def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
