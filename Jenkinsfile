@@ -23,7 +23,7 @@ pipeline {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
                     sh 'ggshield secret scan repo . --json'
-                    // Check if the file was created and its size                }
+                }
             }
             post {
                 always {
@@ -32,7 +32,6 @@ pipeline {
                             // Read the JSON file and parse total incidents
                             def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
                             def totalIncidents = sh(script: "jq '.total_incidents' ggshield_output.json", returnStdout: true).trim().toInteger()
-                            
                             if (totalIncidents > 0) {
                                 // Parse incidents array and process each incident
                                 def incidentsList = sh(script: "jq -c '.incidents[]' ggshield_output.json", returnStdout: true).trim().split('\n')
