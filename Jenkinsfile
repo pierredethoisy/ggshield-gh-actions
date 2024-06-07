@@ -22,15 +22,21 @@ pipeline {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
+                    def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
+                    writeFile file: 'ggshield_output.json', text: output
+                    echo "ggshield_output.json content: ${output}"
                 }
             }
             post {
                 always {
                     script {
-                            def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
-                            if (output > 0) {
-                                // Parse incidents array and process each incident
-                                def incidentsList = sh(script: "jq -c '.output[]' ggshield_output.json", returnStdout: true).trim().split('\n')
+                        try {
+                            def output = readFile('ggshield_output.json').trim()
+                            echo "ggshield_output.json content: ${output}"
+                            def totalIncidents = sh(script: "jq '.total_incidents' ggshield_output.json", returnStdout: true).trim().toInteger()
+                            
+                            if (totalIncidents > 0) {
+                                def incidentsList = sh(script: "jq -c '.incidents[]' ggshield_output.json", returnStdout: true).trim().split('\n')
                                 for (incident in incidentsList) {
                                     def incidentJson = sh(script: "echo '${incident}' | jq .", returnStdout: true).trim()
                                     def incidentUrl = sh(script: "echo '${incidentJson}' | jq -r '.incident_url'", returnStdout: true).trim()
@@ -52,6 +58,8 @@ pipeline {
                             } else {
                                 echo "No incidents found."
                             }
+                        } catch (Exception e) {
+                            echo "Failed to process results: ${e.message}"
                         }
                     }
                 }
