@@ -22,9 +22,11 @@ pipeline {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
-                    def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
-                    writeFile file: 'ggshield_output.json', text: output
-                    echo "ggshield_output.json content: ${output}"
+                    script {
+                        def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
+                        writeFile file: 'ggshield_output.json', text: output
+                        echo "ggshield_output.json content: ${output}"
+                    }
                 }
             }
             post {
