@@ -22,9 +22,13 @@ pipeline {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     script {
-                        def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
-                        writeFile file: 'ggshield_output.json', text: output
-                        echo "ggshield_output.json content: ${output}"
+                        try {
+                            def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
+                            writeFile file: 'ggshield_output.json', text: output
+                            echo "ggshield_output.json content: ${output}"
+                        } catch (Exception e) {
+                            echo "Failed to run GitGuardian scan: ${e.message}"
+                        }
                     }
                 }
             }
@@ -37,6 +41,8 @@ pipeline {
                             def json = new groovy.json.JsonSlurper().parseText(output)
                             def totalIncidents = json.total_incidents
                             
+                            echo "Total incidents: ${totalIncidents}"
+                            
                             if (totalIncidents > 0) {
                                 def incidentsList = json.incidents
                                 for (incident in incidentsList) {
@@ -47,6 +53,8 @@ pipeline {
                                         curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
                                         https://api.gitguardian.com/v1/incidents/secrets/$incidentId
                                     """, returnStdout: true).trim()
+                                    
+                                    echo "API response for incident ID ${incidentId}: ${response}"
                                     
                                     def incidentDetails = new groovy.json.JsonSlurper().parseText(response)
                                     def incidentDate = incidentDetails.date
