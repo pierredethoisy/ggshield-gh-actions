@@ -21,6 +21,8 @@ pipeline {
             }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+                    // Install jq
+                    sh 'apk add --no-cache jq'
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
                     script {
                         def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
