@@ -23,6 +23,9 @@ pipeline {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     sh 'echo PATH is $PATH && PATH=$PATH:/usr/local/bin/jq'
                     sh 'ggshield secret scan repo . --json --output ggshield_output.json'
+                    // Check if the file was created and its size
+                    sh 'ls -l ggshield_output.json'
+                    // Print the contents of ggshield_output.json
                     sh 'cat ggshield_output.json'
                 }
             }
