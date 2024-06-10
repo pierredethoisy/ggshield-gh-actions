@@ -23,26 +23,36 @@ pipeline {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     script {
                         try {
-                            def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
-                            writeFile file: 'ggshield_output.json', text: output
-                            echo "ggshield_output.json content: ${output}"
+                            // Capture the exit status of the ggshield command
+                            def status = sh(script: "ggshield secret scan repo . --json > ggshield_output.json", returnStatus: true)
 
-                            def jsonSlurper = new groovy.json.JsonSlurper()
-                            def parsedOutput = jsonSlurper.parseText(output)
-                            
-                            // Echo the main id field
-                            echo "Main ID: ${parsedOutput.id}"
+                            // Check if the command was successful
+                            if (status == 0) {
+                                def output = readFile('ggshield_output.json')
+                                echo "ggshield_output.json content: ${output}"
 
-                            // Iterate through the scans and echo each id
-                            parsedOutput.scans.each { scan ->
-                                echo "Scan ID: ${scan.id}"
+                                def jsonSlurper = new groovy.json.JsonSlurper()
+                                def parsedOutput = jsonSlurper.parseText(output)
                                 
-                                // Iterate through entities_with_incidents and echo incident ids
-                                scan.entities_with_incidents.each { entity ->
-                                    entity.incidents.each { incident ->
-                                        echo "Incident ID: ${incident.id}"
+                                // Echo the main id field
+                                echo "Main ID: ${parsedOutput.id}"
+
+                                // Iterate through the scans and echo each id
+                                parsedOutput.scans.each { scan ->
+                                    echo "Scan ID: ${scan.id}"
+                                    
+                                    // Iterate through entities_with_incidents and echo incident ids
+                                    scan.entities_with_incidents.each { entity ->
+                                        entity.incidents.each { incident ->
+                                            echo "Incident ID: ${incident.id}"
+                                        }
                                     }
                                 }
+                            } else {
+                                // Read and print the content of the output file even if the command fails
+                                def errorOutput = readFile('ggshield_output.json')
+                                echo "ggshield_output.json content (in case of failure): ${errorOutput}"
+                                error "GitGuardian scan failed with exit code ${status}"
                             }
                         } catch (Exception e) {
                             echo "Failed to run GitGuardian scan: ${e.message}"
