@@ -47,6 +47,8 @@ pipeline {
                                     scan.entities_with_incidents.each { entity ->
                                         entity.incidents.each { incident ->
                                             echo "Incident ID: ${incident.incident_url}"
+                                            def incidentUrlParts = incident.incident_url.split('/')[-1]
+                                            echo incidentUrlParts
                                         }
                                     }
                                 }
