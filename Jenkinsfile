@@ -38,7 +38,6 @@ pipeline {
                                 
                                 // Echo the main id field
                                 echo "Main ID: ${parsedOutput.id}"
-                                echo "URL: 
 
                                 // Iterate through the scans and echo each id
                                 parsedOutput.scans.each { scan ->
@@ -47,7 +46,7 @@ pipeline {
                                     // Iterate through entities_with_incidents and echo incident ids
                                     scan.entities_with_incidents.each { entity ->
                                         entity.incidents.each { incident ->
-                                            echo "Incident ID: ${incident.url}"
+                                            echo "Incident ID: ${incident.incident_url}"
                                         }
                                     }
                                 }
