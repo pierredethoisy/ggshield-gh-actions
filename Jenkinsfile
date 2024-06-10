@@ -41,7 +41,7 @@ pipeline {
                             def json = new groovy.json.JsonSlurper().parseText(output)
                             def totalIncidents = json.total_incidents
                             
-                            echo "Total incidents: ${totalIncidents}"
+                            echo output
                             
                             if (totalIncidents > 0) {
                                 def incidentsList = json.incidents
