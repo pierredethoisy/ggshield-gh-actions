@@ -26,51 +26,11 @@ pipeline {
                             def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
                             writeFile file: 'ggshield_output.json', text: output
                             echo "ggshield_output.json content: ${output}"
-                        } catch (Exception e) {
-                            echo "Failed to run GitGuardian scan: ${e.message}"
-                        }
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        try {
-                            def output = readFile('ggshield_output.json').trim()
-                            echo "ggshield_output.json content: ${output}"
-                            def json = new groovy.json.JsonSlurper().parseText(output)
-                            def totalIncidents = json.total_incidents
-                            
-                            echo output
-                            
-                            if (totalIncidents > 0) {
-                                def incidentsList = json.incidents
-                                echo "incidentsList: ${incidentsList}"
-                                for (incident in incidentsList) {
-                                    def incidentUrl = incident.incident_url
-                                    echo "incidentUrl: ${incidentUrl}"
-                                    def incidentId = incidentUrl.tokenize("/")[-1]
-                                    echo "incidentId: ${incidentId}"                                    
-                                    def response = sh(script: """
-                                        curl -s -H "Authorization: Bearer ${GITGUARDIAN_API_KEY}" \
-                                        https://api.gitguardian.com/v1/incidents/secrets/$incidentId
-                                    """, returnStdout: true).trim()
-                                    
-                                    echo "API response for incident ID ${incidentId}: ${response}"
-                                    
-                                    def incidentDetails = new groovy.json.JsonSlurper().parseText(response)
-                                    def incidentDate = incidentDetails.date
-                                    def incidentSeverity = incidentDetails.severity
-                                    
-                                    echo "Incident ID: ${incidentId}"
-                                    echo "Date: ${incidentDate}"
-                                    echo "Severity: ${incidentSeverity}"
-                                }
-                            } else {
-                                echo "No incidents found."
+                            for (incident in output) {
+                            echo "Incident ID: ${incidentId}"
                             }
                         } catch (Exception e) {
-                            echo "Failed to process results: ${e.message}"
+                            echo "Failed to run GitGuardian scan: ${e.message}"
                         }
                     }
                 }
