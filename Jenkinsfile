@@ -26,8 +26,23 @@ pipeline {
                             def output = sh(script: "ggshield secret scan repo . --json", returnStdout: true).trim()
                             writeFile file: 'ggshield_output.json', text: output
                             echo "ggshield_output.json content: ${output}"
-                            for (incident in output) {
-                            echo "Incident ID: ${incidentId}"
+
+                            def jsonSlurper = new groovy.json.JsonSlurper()
+                            def parsedOutput = jsonSlurper.parseText(output)
+                            
+                            // Echo the main id field
+                            echo "Main ID: ${parsedOutput.id}"
+
+                            // Iterate through the scans and echo each id
+                            parsedOutput.scans.each { scan ->
+                                echo "Scan ID: ${scan.id}"
+                                
+                                // Iterate through entities_with_incidents and echo incident ids
+                                scan.entities_with_incidents.each { entity ->
+                                    entity.incidents.each { incident ->
+                                        echo "Incident ID: ${incident.id}"
+                                    }
+                                }
                             }
                         } catch (Exception e) {
                             echo "Failed to run GitGuardian scan: ${e.message}"
@@ -37,4 +52,3 @@ pipeline {
             }
         }
     }
-}
