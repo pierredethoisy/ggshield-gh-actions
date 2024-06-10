@@ -28,7 +28,9 @@ pipeline {
 
                             // Check if the command was successful
                             if (status == 0) {
-                                def output = readFile('ggshield_output.json')
+                                echo "no secret found"
+                            } else if (status==1) {
+                                def  = readFile('ggshield_output.json')
                                 echo "ggshield_output.json content: ${output}"
 
                                 def jsonSlurper = new groovy.json.JsonSlurper()
