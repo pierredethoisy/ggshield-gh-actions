@@ -50,12 +50,11 @@ pipeline {
                                             echo "Incident ID: ${incident.incident_url}"
                                             def incidentUrlParts = incident.incident_url.split('/')[-1]
                                             echo incidentUrlParts
-                                            def response =  httpRequest customHeaders: [[authorization: "Token ${GITGUARDIAN_API_KEY}"]],
-                                                  httpMode: "GET",
-                                                  url: "https://api.gitguardian.com/v1/incidents/secrets/${incidentUrlParts}"
-                                                    echo "Status: ${response.status}"
-                                                    echo "Response: ${response.content}"
-                                                    echo "Headers: ${response.headers}"
+                                            def httpRequest(
+                                                    url: "https://api.gitguardian.com/v1/incidents/secrets/${incidentId}",
+                                                    customHeaders: [[name: 'Authorization', value: "Bearer ${GITGUARDIAN_API_KEY}"]],
+                                                    validResponseCodes: '200'
+                                                ).content
                                         }
                                     }
                                 }
