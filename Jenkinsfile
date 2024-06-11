@@ -22,6 +22,23 @@ pipeline {
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                     script {
+                        // Install curl if not available
+                        sh '''
+                            if command -v curl >/dev/null 2>&1; then
+                                echo "curl is already installed"
+                            else
+                                if command -v apt-get >/dev/null 2>&1; then
+                                    apt-get update && apt-get install -y curl
+                                elif command -v apk >/dev/null 2>&1; then
+                                    apk add --no-cache curl
+                                elif command -v yum >/dev/null 2>&1; then
+                                    yum install -y curl
+                                else
+                                    echo "No known package manager found. curl installation failed."
+                                    exit 1
+                                fi
+                            fi
+                        '''
                         try {
                             // Capture the exit status of the ggshield command
                             def status = sh(script: "ggshield secret scan repo . --json > ggshield_output.json", returnStatus: true)
