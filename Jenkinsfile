@@ -50,7 +50,7 @@ pipeline {
                                             echo "Incident ID: ${incident.incident_url}"
                                             def incidentUrlParts = incident.incident_url.split('/')[-1]
                                             echo incidentUrlParts
-                                            def httpRequest(
+                                            def response = httpRequest(
                                                     url: "https://api.gitguardian.com/v1/incidents/secrets/${incidentUrlParts}",
                                                     customHeaders: [[name: 'Authorization', value: "Token ${GITGUARDIAN_API_KEY}"]],
                                                     validResponseCodes: '200'
