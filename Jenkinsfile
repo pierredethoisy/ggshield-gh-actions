@@ -56,6 +56,14 @@ pipeline {
                                                     validResponseCodes: '200'
                                                 ).content
                                             echo "response: ${response}"
+                                            def incidentDetails = new groovy.json.JsonSlurper().parseText(response)
+                                            def incidentDate = incidentDetails.date
+                                            def incidentSeverity = incidentDetails.severity
+                                            
+                                            echo "Incident ID: ${incidentId}"
+                                            echo "Date: ${incidentDate}"
+                                            echo "Severity: ${incidentSeverity}"
+
                                         }
                                     }
                                 }
