@@ -54,9 +54,8 @@ pipeline {
                                                     url: "https://api.gitguardian.com/v1/incidents/secrets/${incidentUrlParts}",
                                                     customHeaders: [[name: 'Authorization', value: "Token ${GITGUARDIAN_API_KEY}"]],
                                                     validResponseCodes: '200'
-                                                ).content
-                                            echo "response: ${response}"
-                                            echo "Hello World"
+                                                )
+                                            echo "response: ${response.content}"
                                             def incidentDetails = new groovy.json.JsonSlurper().parseText(response)
                                             def incidentDate = incidentDetails.date
                                             def incidentSeverity = incidentDetails.severity
