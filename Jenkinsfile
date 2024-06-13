@@ -55,6 +55,12 @@ pipeline {
                                                     customHeaders: [[name: 'Authorization', value: "Token ${GITGUARDIAN_API_KEY}"]],
                                                     validResponseCodes: '200'
                                                 )
+                                            def status_http = sh(script: "httpRequest(
+                                                    url: "https://api.gitguardian.com/v1/incidents/secrets/${incidentUrlParts}", /
+                                                    customHeaders: [[name: 'Authorization', value: "Token ${GITGUARDIAN_API_KEY}"]], /
+                                                    validResponseCodes: '200'
+                                                )", returnStatus: true)
+                                            echo "status: ${status_http}"
                                             echo "response: ${response.content}"
                                             def incidentDetails = new groovy.json.JsonSlurper().parseText(response)
                                             def incidentDate = incidentDetails.date
