@@ -39,5 +39,9 @@ password = cZIxOB71IFGoRLDSFG11222333444135676SFS23435461231243111
 password = cZIxOB71IFGoRLDSFG11222333444135676SFS23435461231243111
 
 
+
+password = ghp_sebxproaf2z9yql3ouwkxfexwmghnnyv231523534
+
+
 aws_access_key_id = AKIAY6HM2ZTJOYRHRXXK
 aws_secret_access_key = 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
