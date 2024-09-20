@@ -21,6 +21,9 @@ colors = {
     "cyan": "36",
     "white": "37",
     "reset": "0"
+
+pwd= sdFsSSf3-rereh4245555
+
 }
 
 # Example usage
