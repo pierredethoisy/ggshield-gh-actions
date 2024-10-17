@@ -16,6 +16,8 @@ colors = {
     "red": "31",
     "green": "32",
     "yellow": "33",
+
+    password='xoxb-163213206324-SDFSfsdgfdsgF2133542324522'  
     "blue": "34",
     "magenta": "35",
     "cyan": "36",
